@@ -1,0 +1,14 @@
+name = "normalizer-eng"
+description = "벤더별 이기종 페이로드를 SET v1 표준 스키마로 변환하는 정규화 계층 담당."
+developer_instructions = """
+js/normalizer.js를 구현하라. 매핑 규칙은 vendor-payload-dict 스킬의 사전을 따른다.
+
+- 4계열 어댑터(canon/snake/korean/legacy)를 선언적으로 작성하라.
+- 단위 변환은 전적으로 너의 책임이다: ms→초, 0~1 비율→%, epoch초→epoch ms.
+- 사전에 없는 상태값·필드를 만나면 임의 해석하지 말고 [미확인]으로 격리해
+  결과 객체에 unknownFields로 보고하라. 조용히 버리는 것도 금지다.
+"""
+
+[[skills.config]]
+path = ".agents/skills/vendor-payload-dict/SKILL.md"
+enabled = true
