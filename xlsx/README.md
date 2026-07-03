@@ -56,18 +56,9 @@
 2. `prompt.md` 내용을 그대로 붙여넣어 실행합니다.
 3. 에이전트가 파일을 읽고 → 용어를 정규화하고 → `통합_생산보고서.xlsx`를 생성하는 과정을 관찰합니다.
 
-### B. Claude Code / Codex (CLI)
+### B. Claude Code / Codex
 
-```bash
-git clone https://github.com/namojo/harness-edu.git
-cd harness-edu/xlsx
-
-# Claude Code
-claude "prompt.md의 지시에 따라 이 폴더의 보고서를 통합해줘"
-
-# Codex
-codex exec "$(cat prompt.md)"
-```
+이 저장소를 클론한 뒤 `xlsx` 디렉토리에서 Claude Code 또는 Codex를 실행하고, **`prompt.md`의 내용을 그대로 입력**하면 됩니다.
 
 에이전트는 pandas/openpyxl 등으로 파일을 파싱하고, 용어집 기반 정규화 후 수식이 살아있는 통합 엑셀을 생성해야 합니다.
 
