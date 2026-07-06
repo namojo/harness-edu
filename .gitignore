@@ -5,6 +5,6 @@
 *~
 *.tmp
 
-# 환경 변수
+# 환경변수
 .env
 .env.local
