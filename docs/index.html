@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>harness-edu · 하네스로 일하는 법</title>
+<meta name="description" content="일회성 프롬프트에서 반복 가능한 시스템으로. 제조·금융 실무자와 개발자를 위한 하네스(Harness) 실습형 커리큘럼 — Claude Code와 Codex로 배우는 Agent·Skill·Tool." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --canvas:#faf9f5; --surface-soft:#f5f0e8; --surface-card:#efe9de; --surface-cream-strong:#e8e0d2;
+    --surface-dark:#181715; --surface-dark-elevated:#252320; --surface-dark-soft:#1f1e1b;
+    --hairline:#e6dfd8; --hairline-soft:#ebe6df;
+    --primary:#cc785c; --primary-active:#a9583e; --teal:#5db8a6; --amber:#e8a55a;
+    --ink:#141413; --body-strong:#252523; --body:#3d3d3a; --muted:#6c6a64; --muted-soft:#8e8b82;
+    --on-dark:#faf9f5; --on-dark-soft:#a09d96; --success:#5db872;
+    --r-md:8px; --r-lg:12px; --r-xl:16px; --pill:9999px;
+    --serif:"Noto Serif KR","Fraunces",Garamond,"Times New Roman",serif;
+    --serif-latin:"Fraunces","Noto Serif KR",Garamond,serif;
+    --sans:"Inter","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+    --maxw:1200px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--canvas); color:var(--body);
+    font-family:var(--sans); font-size:16px; line-height:1.55;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  h1,h2,h3,h4{font-family:var(--serif); color:var(--ink); font-weight:600; letter-spacing:-0.02em; line-height:1.15}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .band{padding:88px 0}
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--primary-active)}
+  .lead{font-size:19px;line-height:1.6;color:var(--body-strong)}
+  .muted{color:var(--muted)}
+
+  /* spike mark */
+  .spike{display:inline-block;width:16px;height:16px;flex:0 0 16px}
+  .spike svg{width:100%;height:100%;display:block}
+
+  /* nav */
+  header.nav{position:sticky;top:0;z-index:50;background:rgba(250,249,245,.86);backdrop-filter:saturate(140%) blur(10px);border-bottom:1px solid var(--hairline)}
+  .nav-inner{display:flex;align-items:center;gap:24px;height:64px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--serif-latin);font-weight:600;color:var(--ink);font-size:18px;letter-spacing:-0.02em}
+  .nav-links{display:flex;gap:26px;margin-left:12px}
+  .nav-links a{font-size:14px;font-weight:500;color:var(--body);transition:color .15s}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-cta{margin-left:auto;display:flex;align-items:center;gap:14px}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-weight:500;font-size:14px;border-radius:var(--r-md);padding:11px 18px;border:1px solid transparent;cursor:pointer;transition:background .15s,border-color .15s,color .15s}
+  .btn-primary{background:var(--primary);color:#fff}
+  .btn-primary:hover{background:var(--primary-active)}
+  .btn-secondary{background:var(--canvas);color:var(--ink);border-color:var(--hairline)}
+  .btn-secondary:hover{border-color:var(--muted-soft)}
+  .btn-on-dark{background:var(--surface-dark-elevated);color:var(--on-dark)}
+  .btn-cream{background:var(--canvas);color:var(--ink)}
+  .nav-toggle{display:none;margin-left:auto;background:none;border:1px solid var(--hairline);border-radius:var(--r-md);padding:8px 10px;cursor:pointer;color:var(--ink)}
+
+  /* hero */
+  .hero{padding:76px 0 64px}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+  h1.display{font-size:60px;letter-spacing:-0.035em;line-height:1.05}
+  .hero p.lead{margin-top:22px;max-width:32em}
+  .hero-actions{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap}
+  .hero-tags{display:flex;gap:8px;margin-top:26px;flex-wrap:wrap}
+  .tag{font-size:12.5px;font-weight:500;color:var(--ink);background:var(--surface-card);border-radius:var(--pill);padding:5px 13px}
+
+  /* code window */
+  .code-win{background:var(--surface-dark);border-radius:var(--r-lg);padding:0;overflow:hidden;box-shadow:0 1px 3px rgba(20,20,19,.08)}
+  .code-bar{display:flex;align-items:center;gap:7px;padding:13px 16px;border-bottom:1px solid #2c2a26}
+  .dot{width:11px;height:11px;border-radius:50%}
+  .code-title{margin-left:8px;color:var(--on-dark-soft);font-family:var(--mono);font-size:12.5px}
+  .code-body{padding:20px 22px;font-family:var(--mono);font-size:13.5px;line-height:1.7;color:var(--on-dark);overflow-x:auto}
+  .code-body .c-mut{color:var(--on-dark-soft)}
+  .code-body .c-cor{color:#e39b81}
+  .code-body .c-tel{color:var(--teal)}
+  .code-body .c-amb{color:var(--amber)}
+  .code-body .c-str{color:#b6d19f}
+  .prompt-line{color:#fff}
+
+  /* principles */
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .card{background:var(--surface-card);border-radius:var(--r-lg);padding:30px}
+  .card h3{font-size:20px;margin-bottom:10px}
+  .card p{font-size:15px;line-height:1.6}
+  .card .num{font-family:var(--serif-latin);font-size:15px;color:var(--primary-active);font-weight:600;letter-spacing:0}
+  .sec-head{max-width:44em}
+  .sec-head h2{font-size:40px;letter-spacing:-0.03em;margin:14px 0 0}
+  .sec-head p{margin-top:16px}
+
+  /* three axes */
+  .axes{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
+  .axis{border:1px solid var(--hairline);border-radius:var(--r-lg);padding:28px;background:var(--canvas)}
+  .axis .k{font-family:var(--serif-latin);font-size:22px;color:var(--ink);font-weight:600}
+  .axis .who{font-size:13px;color:var(--muted);margin:2px 0 14px}
+  .axis ul{list-style:none;font-size:14.5px;line-height:1.7}
+  .axis li{padding-left:18px;position:relative}
+  .axis li::before{content:"";position:absolute;left:0;top:.65em;width:6px;height:6px;border-radius:50%;background:var(--primary)}
+
+  /* audience filter */
+  .filter{display:inline-flex;background:var(--surface-cream-strong);border-radius:var(--pill);padding:4px;gap:2px;margin-top:8px}
+  .filter button{border:none;background:transparent;font-family:var(--sans);font-size:13.5px;font-weight:500;color:var(--muted);padding:8px 18px;border-radius:var(--pill);cursor:pointer;transition:all .15s}
+  .filter button.active{background:var(--canvas);color:var(--ink);box-shadow:0 1px 2px rgba(20,20,19,.06)}
+
+  /* curriculum */
+  .stage{margin-top:52px}
+  .stage-label{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--hairline);padding-bottom:14px;margin-bottom:28px}
+  .stage-label h3{font-size:26px}
+  .stage-label .st{font-family:var(--serif-latin);color:var(--primary-active);font-size:15px;font-weight:600}
+  .stage-label .desc{margin-left:auto;font-size:14px;color:var(--muted);max-width:24em;text-align:right}
+  .mods{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .mod{background:var(--surface-card);border-radius:var(--r-lg);padding:26px;display:flex;flex-direction:column;gap:12px;transition:opacity .2s,transform .2s;border:1px solid transparent}
+  .mod.dim{opacity:.32;filter:saturate(.6)}
+  .mod .badges{display:flex;gap:6px;flex-wrap:wrap}
+  .badge{font-size:11.5px;font-weight:500;border-radius:var(--pill);padding:4px 11px}
+  .b-nondev{background:#e7efe9;color:#2f6b4a}
+  .b-dev{background:#e9e5f0;color:#514a78}
+  .b-both{background:var(--surface-cream-strong);color:var(--body-strong)}
+  .b-new{background:var(--primary);color:#fff;letter-spacing:.6px;text-transform:uppercase;font-size:10.5px}
+  .b-tool{background:#e7edf0;color:#3a5a6b}
+  .mod h4{font-size:19px;font-family:var(--serif);line-height:1.25}
+  .mod .goal{font-size:14.5px;line-height:1.58;color:var(--body)}
+  .mod .meta{margin-top:auto;font-size:12.5px;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;padding-top:6px}
+  .mod .meta b{color:var(--body-strong);font-weight:500}
+  .mod a.go{font-size:13.5px;font-weight:500;color:var(--primary);display:inline-flex;align-items:center;gap:5px}
+  .mod a.go:hover{color:var(--primary-active)}
+  .selectbadge{font-size:11px;color:var(--muted-soft)}
+
+  /* dark band */
+  .dark{background:var(--surface-dark);color:var(--on-dark)}
+  .dark h2{color:var(--on-dark)}
+  .dark .lead{color:var(--on-dark-soft)}
+  .dark .eyebrow{color:var(--amber)}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:14px 18px;margin-top:26px;font-size:15px}
+  .kv .kk{color:var(--amber);font-family:var(--mono);font-size:13px;white-space:nowrap}
+  .kv .vv{color:var(--on-dark-soft)}
+
+  /* paths (dev/nondev) */
+  .paths{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:44px}
+  .path{border:1px solid var(--hairline);border-radius:var(--r-lg);padding:32px;background:var(--canvas)}
+  .path h3{font-size:22px;display:flex;align-items:center;gap:10px}
+  .path ol{margin:18px 0 0 0;padding-left:20px;font-size:15px;line-height:1.9}
+  .path ol b{font-weight:500;color:var(--ink)}
+
+  /* install */
+  .steps{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:40px}
+  .step{background:var(--surface-card);border-radius:var(--r-lg);padding:26px}
+  .step .n{font-family:var(--serif-latin);font-size:14px;color:var(--primary-active);font-weight:600}
+  .step h4{font-size:18px;margin:6px 0 12px}
+  .step pre{background:var(--surface-dark);color:var(--on-dark);border-radius:var(--r-md);padding:14px 16px;font-family:var(--mono);font-size:13px;line-height:1.65;overflow-x:auto;white-space:pre}
+  .step p{font-size:14px;color:var(--body);margin-top:10px}
+
+  /* coral cta */
+  .coral{background:var(--primary);color:#fff;border-radius:var(--r-lg);padding:56px 48px;text-align:center}
+  .coral h2{color:#fff;font-size:36px}
+  .coral p{color:rgba(255,255,255,.9);margin:14px auto 0;max-width:34em;font-size:17px}
+  .coral .btn{margin-top:28px}
+
+  /* footer */
+  footer{background:var(--surface-dark);color:var(--on-dark-soft);padding:60px 0 40px}
+  footer .brand{color:var(--on-dark)}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;margin-top:8px}
+  .foot-grid h5{color:var(--on-dark);font-family:var(--sans);font-size:13px;font-weight:700;letter-spacing:.4px;margin-bottom:14px}
+  .foot-grid a{display:block;font-size:13.5px;color:var(--on-dark-soft);padding:5px 0;transition:color .15s}
+  .foot-grid a:hover{color:var(--on-dark)}
+  .foot-note{margin-top:40px;padding-top:24px;border-top:1px solid #2c2a26;font-size:12.5px;color:var(--on-dark-soft);line-height:1.7}
+
+  @media (max-width:900px){
+    .hero-grid,.split,.paths{grid-template-columns:1fr}
+    .grid-4{grid-template-columns:repeat(2,1fr)}
+    .axes,.grid-3,.mods{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr}
+    .foot-grid{grid-template-columns:1fr 1fr}
+    h1.display{font-size:40px}
+    .sec-head h2{font-size:30px}
+    .nav-links{display:none}
+    .nav-toggle{display:inline-flex}
+    .nav-cta .btn-secondary{display:none}
+    .stage-label{flex-wrap:wrap}
+    .stage-label .desc{margin-left:0;text-align:left;width:100%}
+  }
+  @media (max-width:900px){
+    .nav-links.open{display:flex;position:absolute;top:64px;left:0;right:0;flex-direction:column;background:var(--canvas);border-bottom:1px solid var(--hairline);padding:14px 24px;gap:4px}
+    .nav-links.open a{padding:10px 0}
+  }
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top">
+      <span class="spike" aria-hidden="true"><svg viewBox="0 0 24 24"><g fill="#141413"><rect x="11" y="1" width="2" height="22"/><rect x="1" y="11" width="22" height="2"/><rect x="3.8" y="3.8" width="2" height="16.4" transform="rotate(45 12 12)"/><rect x="3.8" y="3.8" width="2" height="16.4" transform="rotate(-45 12 12)"/></g></svg></span>
+      harness-edu
+    </a>
+    <nav class="nav-links" id="navlinks">
+      <a href="#principles">4원리</a>
+      <a href="#axes">3축</a>
+      <a href="#curriculum">커리큘럼</a>
+      <a href="#tools">도구</a>
+      <a href="#start">시작하기</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-secondary" href="https://github.com/namojo/harness-edu" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn-primary" href="#curriculum">학습 시작</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="메뉴">☰</button>
+  </div>
+</header>
+
+<a id="top"></a>
+
+<!-- HERO -->
+<section class="band hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">Harness Engineering · 실습형 커리큘럼</p>
+      <h1 class="display">일회성 프롬프트에서<br>반복 가능한 <em style="font-family:var(--serif-latin);font-style:italic;font-weight:500">시스템</em>으로</h1>
+      <p class="lead">AI에게 "한 번 시키는 법"은 누구나 압니다. 이 과정은 그다음을 가르칩니다 —
+        <b>누가 돌려도 같은 품질</b>이 나오는 하네스(harness)를 설계하는 법. 제조·금융 실무자와
+        개발자가 <b>Claude Code</b>와 <b>Codex</b>로 함께 배웁니다.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#curriculum">커리큘럼 보기</a>
+        <a class="btn btn-secondary" href="https://github.com/namojo/harness-edu/blob/main/%EC%9E%90%EA%B0%80%ED%95%99%EC%8A%B5_%EA%B0%80%EC%9D%B4%EB%93%9C.md" target="_blank" rel="noopener">자가 학습 가이드 →</a>
+      </div>
+      <div class="hero-tags">
+        <span class="tag">코딩 지식 없이 시작</span>
+        <span class="tag">제조 · 금융 실전 시나리오</span>
+        <span class="tag">Agent · Skill · Tool</span>
+      </div>
+    </div>
+    <div class="code-win reveal">
+      <div class="code-bar">
+        <span class="dot" style="background:#e06c5a"></span><span class="dot" style="background:#e8a55a"></span><span class="dot" style="background:#5db872"></span>
+        <span class="code-title">codex — 대화형 세션</span>
+      </div>
+      <div class="code-body">
+<span class="c-mut"># 품질관리팀: 도구를 붙여 정확한 계산을 위임</span>
+<span class="prompt-line">▸ production-metrics 도구로 07-14</span>
+<span class="prompt-line">  B라인 OEE와 병목을 알려줘</span>
+
+<span class="c-mut">→ compute_oee("B","2026-07-14")</span> <span class="c-tel">✓ tool call</span>
+{ <span class="c-cor">"oee_pct"</span>: <span class="c-str">"69.8%"</span>,
+  <span class="c-cor">"bottleneck"</span>: <span class="c-str">"가동률"</span> }
+
+<span class="c-amb">진단</span> 가동률 75%가 병목입니다. 정지시간
+120분이 원인 — 성능·품질은 정상입니다.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPLES -->
+<section class="band" id="principles" style="background:var(--surface-soft)">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">먼저 알고 시작할 것</p>
+      <h2>모든 실습을 관통하는 4가지 원리</h2>
+      <p class="lead muted">도구가 Claude Code든 Codex든, 업종이 제조든 금융이든 — 좋은 하네스는 늘 이 네 가지의 변주입니다.</p>
+    </div>
+    <div class="grid-4" style="margin-top:44px">
+      <div class="card reveal"><p class="num">01</p><h3>역할 분리</h3><p>"무엇을(스펙)·누가(에이전트)·어떻게(스킬)"를 한 프롬프트에 뭉치지 않고 파일로 나눕니다. 나눠야 재사용·비교·유지보수가 됩니다.</p></div>
+      <div class="card reveal"><p class="num">02</p><h3>지식의 외부화</h3><p>매핑 규칙·도메인 지식·표준 양식을 프롬프트가 아니라 파일로 꺼냅니다. 지식이 바뀌어도 로직은 그대로입니다.</p></div>
+      <div class="card reveal"><p class="num">03</p><h3>계약이 병렬성을 만든다</h3><p>표준 스키마·출력 형식을 먼저 정하면 일을 병렬로 나누고, 매번 같은 형식으로 반복할 수 있습니다.</p></div>
+      <div class="card reveal"><p class="num">04</p><h3>검증자는 분리한다</h3><p>만든 주체가 자기 결과를 최종 승인하지 않습니다. 별도 리뷰어가 교차 검증합니다. 잘 쓰기와 빠뜨리지 않기는 다른 능력입니다.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- THREE AXES -->
+<section class="band" id="axes">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">하네스의 구성 요소</p>
+      <h2>Agent · Skill · Tool — 세 개의 축</h2>
+      <p class="lead muted">하네스는 결국 이 세 가지의 조합입니다. 무엇을 언제 쓰는지 구분하는 것이 이 과정의 핵심 감각입니다.</p>
+    </div>
+    <div class="axes">
+      <div class="axis reveal">
+        <div class="k">Agent</div><div class="who">누가 — 역할·경계</div>
+        <ul><li>일을 나눠 맡길 때</li><li>지시문(정의 파일)로 존재</li><li>예: 요구분석가, 검증자</li></ul>
+      </div>
+      <div class="axis reveal">
+        <div class="k">Skill</div><div class="who">무엇을·어떻게 — 지식·절차</div>
+        <ul><li>판단·문체·도메인 지식</li><li>프롬프트에 주입되는 문서</li><li>"설명서" — 모델이 해석</li></ul>
+      </div>
+      <div class="axis reveal">
+        <div class="k">Tool</div><div class="who">무엇으로 실행 — 결정론적</div>
+        <ul><li>계산·조회·외부 연동</li><li>실제 코드(예: MCP 서버)</li><li>"계산기" — 항상 같은 값</li></ul>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:28px;max-width:52em">
+      판단 규칙 — <b>정의가 고정돼 늘 같은 답이 나와야 하는 일</b>(계산·조회·API)은 <b>Tool</b>로,
+      <b>맥락에 따라 달라지는 판단</b>(무엇이 중요한가·어떻게 쓸까)은 <b>Skill</b>로. 그 둘을 누구에게 맡길지가 <b>Agent</b>입니다.
+    </p>
+  </div>
+</section>
+
+<!-- CURRICULUM -->
+<section class="band" id="curriculum" style="background:var(--surface-soft)">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">커리큘럼</p>
+      <h2>입문 → 실무 → 확장</h2>
+      <p class="lead muted">위에서 아래로 갈수록 "일회성 요청"에서 "반복 가능한 시스템"으로 옮겨 갑니다. 각 카드는 GitHub의 실습 폴더로 연결됩니다.</p>
+      <div class="filter" role="tablist" aria-label="대상자 필터">
+        <button class="active" data-f="all">전체</button>
+        <button data-f="nondev">비개발자</button>
+        <button data-f="dev">개발자</button>
+      </div>
+      <p class="selectbadge" style="margin-top:10px">필터를 고르면 그 대상에 맞는 모듈이 강조됩니다.</p>
+    </div>
+
+    <!-- 입문 -->
+    <div class="stage">
+      <div class="stage-label"><span class="st">STAGE 1</span><h3>입문 — 하네스가 무엇을 바꾸는가</h3><span class="desc">개념을 몸으로 익히는 3개 필수 + 3개 선택 실습</span></div>
+      <div class="mods">
+        <div class="mod reveal" data-aud="both">
+          <div class="badges"><span class="badge b-both">공용</span></div>
+          <h4>공정 보고서 표준화</h4>
+          <p class="goal">용어·문체가 제각각인 6개 분임조 엑셀을 표준용어집 기반으로 통합. 지식을 파일로 외부화하는 첫 감각.</p>
+          <div class="meta"><span>🏭 제조</span><span><b>Claude Code</b></span><span>~30분</span></div>
+          <a class="go" href="https://github.com/namojo/harness-edu/tree/main/xlsx" target="_blank" rel="noopener">xlsx/ 실습 →</a>
+        </div>
+        <div class="mod reveal" data-aud="both">
+          <div class="badges"><span class="badge b-both">공용</span></div>
+          <h4>세 가지 일하는 방식</h4>
+          <p class="goal">같은 보고서를 단일 → 멀티 → 하네스 3단계로 만들며 "이 일은 몇 단계짜리인가"를 판단하는 눈을 기릅니다.</p>
+          <div class="meta"><span>📊 마케팅</span><span><b>Codex</b></span><span>~40분</span></div>
+          <a class="go" href="https://github.com/namojo/harness-edu/tree/main/codex" target="_blank" rel="noopener">codex/ 실습 →</a>
+        </div>
+        <div class="mod reveal" data-aud="both">
+          <div class="badges"><span class="badge b-both">공용</span></div>
+          <h4>단일 vs 에이전트 팀</h4>
+          <p class="goal">배경지식 없는 상태에서 전문가 에이전트 구조가 제안서를 어떻게 바꾸는지 A/B로 비교합니다.</p>
+          <div class="meta"><span>🏛️ 공공·의료</span><span><b>Claude Code</b></span><span>~40분</span></div>
+          <a class="go" href="https://github.com/namojo/harness-edu/tree/main/harness" target="_blank" rel="noopener">harness/ 실습 →</a>
+        </div>
+        <div class="mod reveal" data-aud="both">
+          <div class="badges"><span class="badge b-both">공용</span><span class="badge b-nondev">선택</span></div>
+          <h4>정책 데이터 → 슬라이드</h4>
+          <p class="goal">수집 → 갱신 → 디자인 → 검수로 이어지는 파이프라인 하네스. 기준일 하나로 전체가 갱신되는 살아있는 문서.</p>
+          <div class="meta"><span>📑 정책</span><span><b>Claude Code</b></span><span>~40분</span></div>
+          <a class="go" href="https://github.com/namojo/harness-edu/tree/main/slide" target="_blank" rel="noopener">slide/ 실습 →</a>
+        </div>
+        <div class="mod reveal" data-aud="dev">
+          <div class="badges"><span class="badge b-dev">개발</span><span class="badge b-nondev">선택</span></div>
+          <h4>스펙 → 하네스 직접 설계</h4>
+          <p class="goal">스펙(What)을 쓰고 하네스(Who/How)를 직접 구성해 맛집 지도 웹앱을 완성. 역할 분리를 손으로 설계합니다.</p>
+          <div class="meta"><span>🗺️ 데이터·웹</span><span><b>Claude Code</b></span><span>~60분</span></div>
+          <a class="go" href="https://github.com/namojo/harness-edu/tree/main/map" target="_blank" rel="noopener">map/ 실습 →</a>
+        </div>
+        <div class="mod reveal" data-aud="dev">
+          <div class="badges"><span class="badge b-dev">개발</span><span class="badge b-nondev">선택</span></div>
+          <h4>실시간 설비 대시보드</h4>
+          <p class="goal">이기종 설비 텔레메트리를 표준 스키마로 정규화. 계약을 먼저 정해 병렬 개발하는 팬아웃 하네스.</p>
+          <div class="meta"><span>🖥️ 제조·관제</span><span><b>Claude Code</b></span><span>~60분</span></div>
+          <a class="go" href="https://github.com/namojo/harness-edu/tree/main/dashboard" target="_blank" rel="noopener">dashboard/ 실습 →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 실무 -->
+    <div class="stage">
+      <div class="stage-label"><span class="st">STAGE 2</span><h3>실무 — 매일 돌리는 하네스 엔지니어링</h3><span class="desc">Codex를 대화형으로 익히고, 반복되면 자동화</span></div>
+      <div class="mods">
+        <div class="mod reveal" data-aud="dev">
+          <div class="badges"><span class="badge b-new">New</span><span class="badge b-dev">개발</span></div>
+          <h4>트랙 A · 코드 유지보수</h4>
+          <p class="goal">숨은 결함이 있는 품질 스크립트로 "초록불 ≠ 정확"을 체험. 대화형 진단 → 승인하며 패치 → 교차 리뷰, 그리고 CI 자동화.</p>
+          <div class="meta"><span>🏭 제조</span><span><b>Codex</b></span><span>~40분</span></div>
+          <a class="go" href="https://github.com/namojo/harness-edu/tree/main/codex-engineering/track-a-engineering" target="_blank" rel="noopener">트랙 A 실습 →</a>
+        </div>
+        <div class="mod reveal" data-aud="nondev">
+          <div class="badges"><span class="badge b-new">New</span><span class="badge b-nondev">비개발</span></div>
+          <h4>트랙 B · 업무 자동화</h4>
+          <p class="goal">코드 없이 규제 모니터링을 시스템화. 대화형으로 형식이 흔들리는 문제를 겪고, 스키마 계약으로 매주 같은 구조를 보장.</p>
+          <div class="meta"><span>🏦 금융</span><span><b>Codex</b></span><span>~30분</span></div>
+          <a class="go" href="https://github.com/namojo/harness-edu/tree/main/codex-engineering/track-b-ops" target="_blank" rel="noopener">트랙 B 실습 →</a>
+        </div>
+        <div class="mod reveal" data-aud="both">
+          <div class="badges"><span class="badge b-both">개요</span></div>
+          <h4>Harness Engineering 5원칙</h4>
+          <p class="goal">샌드박스·권한 통제(대화형 승인 vs 자동화 샌드박스), 출력 계약, 검증자 분리 — 실무 하네스의 공통 규율을 정리합니다.</p>
+          <div class="meta"><span>📐 공통</span><span><b>Codex</b></span><span>읽기</span></div>
+          <a class="go" href="https://github.com/namojo/harness-edu/tree/main/codex-engineering" target="_blank" rel="noopener">개요 읽기 →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 확장 -->
+    <div class="stage">
+      <div class="stage-label"><span class="st">STAGE 3</span><h3>확장 — 에이전트에 없는 능력을 붙이기</h3><span class="desc">세 번째 축 Tool을 직접 만든다</span></div>
+      <div class="mods">
+        <div class="mod reveal" data-aud="both">
+          <div class="badges"><span class="badge b-new">New</span><span class="badge b-tool">Tool</span><span class="badge b-both">공용</span></div>
+          <h4>오픈소스 MCP Tool 만들기</h4>
+          <p class="goal">Python 40여 줄로 생산지표(OEE) 계산 MCP 서버를 만들어, Claude Code와 Codex가 <b>같은 서버를 공유</b>하게 합니다. Skill(설명서)과 Tool(계산기)의 차이를 손으로 익힙니다.</p>
+          <div class="meta"><span>🏭 제조(→금융 확장)</span><span><b>Claude Code + Codex</b></span><span>~40분</span></div>
+          <a class="go" href="https://github.com/namojo/harness-edu/tree/main/tool" target="_blank" rel="noopener">tool/ 실습 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS: interactive first -->
+<section class="band dark" id="tools">
+  <div class="wrap split">
+    <div>
+      <p class="eyebrow">두 개의 에이전트, 하나의 원리</p>
+      <h2>대화형으로 익히고,<br>반복되면 자동화한다</h2>
+      <p class="lead">Claude Code와 Codex는 문법이 다를 뿐 개념은 같습니다. 처음엔 <b style="color:var(--on-dark)">대화형</b>으로
+        일을 시키며 승인·권한 감각을 익히고, 세 번 이상 반복되는 일만 <b style="color:var(--on-dark)">비대화형</b>으로 자동화합니다.
+        자동화는 대화형의 대체가 아니라, 충분히 반복되는 일에 대한 졸업입니다.</p>
+      <div class="kv">
+        <span class="kk">대화형</span><span class="vv">codex(TUI)·Codex 앱·Claude Code. 쓰기 전에 <b style="color:var(--on-dark)">승인을 묻습니다</b> — 승인이 안전장치.</span>
+        <span class="kk">자동화</span><span class="vv">codex exec·CI. 승인이 없으므로 <b style="color:var(--on-dark)">샌드박스</b>(read-only/workspace-write)로 통제.</span>
+        <span class="kk">공통</span><span class="vv">규칙은 AGENTS.md·CLAUDE.md로, 출력은 스키마로 계약.</span>
+      </div>
+    </div>
+    <div class="code-win">
+      <div class="code-bar">
+        <span class="dot" style="background:#e06c5a"></span><span class="dot" style="background:#e8a55a"></span><span class="dot" style="background:#5db872"></span>
+        <span class="code-title">트랙 A — 대화형 → 자동화</span>
+      </div>
+      <div class="code-body">
+<span class="c-mut"># 1) 대화형: 권한 없이 진단만</span>
+<span class="prompt-line">▸ quality_check.py 를 검토해줘.</span>
+<span class="prompt-line">  수정 말고 결함만 진단.</span>
+<span class="c-tel">✓ 단위 오류(ppm ×1000)·0 나눗셈 발견</span>
+
+<span class="c-mut"># 2) 승인하며 패치 (쓰기 전 승인 요청)</span>
+<span class="c-amb">approve?</span> edit quality_check.py  <span class="c-tel">[y]</span>
+
+<span class="c-mut"># 3) 반복되면 자동화 (CI 게이트)</span>
+<span class="c-cor">$ codex</span> review --uncommitted
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PATHS -->
+<section class="band" id="paths">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">누구를 위한가</p>
+      <h2>두 갈래의 학습 경로</h2>
+      <p class="lead muted">코딩 지식은 필요 없습니다 — 확장 단계에서만 Python을 조금 씁니다. 자신에 맞는 길로 시작하세요.</p>
+    </div>
+    <div class="paths">
+      <div class="path reveal">
+        <h3><span class="badge b-nondev">비개발자</span> 실무자 경로</h3>
+        <p class="muted" style="margin-top:6px">기획·관리·리서치·현업 담당</p>
+        <ol>
+          <li><b>공정 보고서 표준화</b> — 지식을 파일로 빼는 감각</li>
+          <li><b>세 가지 일하는 방식</b> — 일의 단계 판단</li>
+          <li><b>단일 vs 에이전트 팀</b> — 하네스의 효과 체감</li>
+          <li><b>트랙 B 업무 자동화</b> — 코드 없이 반복 업무 시스템화</li>
+          <li><b>MCP Tool 만들기</b> — 계산을 도구에 위임(안내대로 따라만)</li>
+        </ol>
+      </div>
+      <div class="path reveal">
+        <h3><span class="badge b-dev">개발자</span> 엔지니어 경로</h3>
+        <p class="muted" style="margin-top:6px">개발·데이터·플랫폼 담당</p>
+        <ol>
+          <li><b>단일 vs 에이전트 팀</b> — 하네스 구조 이해</li>
+          <li><b>스펙 → 하네스 설계</b> · <b>설비 대시보드</b> — 직접 설계</li>
+          <li><b>트랙 A 코드 유지보수</b> — 진단·패치·리뷰·CI</li>
+          <li><b>MCP Tool 만들기</b> — 나만의 Tool 구현·등록</li>
+          <li><b>자동화 졸업</b> — codex exec·스키마·CI로 굳히기</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- START -->
+<section class="band" id="start" style="background:var(--surface-soft)">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">시작하기</p>
+      <h2>4단계로 환경 준비</h2>
+      <p class="lead muted">최초 1회만 설치하면 됩니다. 자세한 순서는 자가 학습 가이드를 따르세요.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><p class="n">STEP 1</p><h4>Git · Python 설치</h4><pre>git --version
+python --version</pre><p>클론과 확장(MCP) 실습에 필요합니다.</p></div>
+      <div class="step reveal"><p class="n">STEP 2</p><h4>Claude Code 설치</h4><pre>irm https://claude.ai/install.ps1 | iex</pre><p>설치 후 PATH 등록. (README 참고)</p></div>
+      <div class="step reveal"><p class="n">STEP 3</p><h4>Harness · Skills 플러그인</h4><pre>/plugin marketplace add revfactory/harness
+/plugin install harness@harness-marketplace</pre><p>Anthropic Skills도 함께 설치합니다.</p></div>
+      <div class="step reveal"><p class="n">STEP 4</p><h4>Codex 로그인</h4><pre>codex --version
+codex login status</pre><p>실무 트랙에서 사용합니다.</p></div>
+    </div>
+    <div style="margin-top:28px;display:flex;gap:12px;flex-wrap:wrap">
+      <a class="btn btn-primary" href="https://github.com/namojo/harness-edu/blob/main/README.md" target="_blank" rel="noopener">설치 가이드 전체 →</a>
+      <a class="btn btn-secondary" href="https://github.com/namojo/harness-edu/blob/main/%EC%8B%A4%EC%8A%B5.txt" target="_blank" rel="noopener">실습 과제(실습.txt) →</a>
+    </div>
+  </div>
+</section>
+
+<!-- CORAL CTA -->
+<section class="band">
+  <div class="wrap">
+    <div class="coral reveal">
+      <h2>지금, 한 모듈부터</h2>
+      <p>전체를 다 할 필요는 없습니다. 입문 3개만 해도 하네스의 핵심은 잡힙니다. 자가 학습 가이드가 순서·관찰 포인트·자가 점검을 안내합니다.</p>
+      <a class="btn btn-cream" href="https://github.com/namojo/harness-edu/blob/main/%EC%9E%90%EA%B0%80%ED%95%99%EC%8A%B5_%EA%B0%80%EC%9D%B4%EB%93%9C.md" target="_blank" rel="noopener">자가 학습 가이드 열기 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <a class="brand" href="#top" style="font-family:var(--serif-latin)">
+      <span class="spike" aria-hidden="true"><svg viewBox="0 0 24 24"><g fill="#faf9f5"><rect x="11" y="1" width="2" height="22"/><rect x="1" y="11" width="22" height="2"/><rect x="3.8" y="3.8" width="2" height="16.4" transform="rotate(45 12 12)"/><rect x="3.8" y="3.8" width="2" height="16.4" transform="rotate(-45 12 12)"/></g></svg></span>
+      harness-edu
+    </a>
+    <div class="foot-grid">
+      <div>
+        <h5>소개</h5>
+        <p style="font-size:13.5px;line-height:1.7;color:var(--on-dark-soft);max-width:26em">
+          revfactory/harness 기반의 하네스 실습 교육 저장소. Claude Code와 Codex로 Agent·Skill·Tool을 배웁니다.
+        </p>
+      </div>
+      <div>
+        <h5>입문</h5>
+        <a href="https://github.com/namojo/harness-edu/tree/main/xlsx" target="_blank" rel="noopener">공정 보고서 표준화</a>
+        <a href="https://github.com/namojo/harness-edu/tree/main/codex" target="_blank" rel="noopener">세 가지 일하는 방식</a>
+        <a href="https://github.com/namojo/harness-edu/tree/main/harness" target="_blank" rel="noopener">단일 vs 에이전트 팀</a>
+      </div>
+      <div>
+        <h5>실무 · 확장</h5>
+        <a href="https://github.com/namojo/harness-edu/tree/main/codex-engineering/track-a-engineering" target="_blank" rel="noopener">트랙 A · 코드 유지보수</a>
+        <a href="https://github.com/namojo/harness-edu/tree/main/codex-engineering/track-b-ops" target="_blank" rel="noopener">트랙 B · 업무 자동화</a>
+        <a href="https://github.com/namojo/harness-edu/tree/main/tool" target="_blank" rel="noopener">MCP Tool 만들기</a>
+      </div>
+      <div>
+        <h5>문서</h5>
+        <a href="https://github.com/namojo/harness-edu" target="_blank" rel="noopener">GitHub 저장소</a>
+        <a href="https://github.com/namojo/harness-edu/blob/main/%EC%9E%90%EA%B0%80%ED%95%99%EC%8A%B5_%EA%B0%80%EC%9D%B4%EB%93%9C.md" target="_blank" rel="noopener">자가 학습 가이드</a>
+        <a href="https://github.com/namojo/harness-edu/blob/main/%EC%8B%A4%EC%8A%B5.txt" target="_blank" rel="noopener">실습 과제</a>
+      </div>
+    </div>
+    <p class="foot-note">
+      본 교육 자료의 회사·데이터·시나리오는 학습을 위한 <b style="color:var(--on-dark)">가상</b>이며, 실제 조직·수치와 무관합니다.
+      기반 하네스: <a href="https://github.com/revfactory/harness" target="_blank" rel="noopener" style="display:inline;color:var(--amber)">revfactory/harness</a>.
+    </p>
+  </div>
+</footer>
+
+<script>
+  // 모바일 네비
+  var t=document.getElementById('navToggle'),n=document.getElementById('navlinks');
+  t&&t.addEventListener('click',function(){n.classList.toggle('open')});
+  n&&n.addEventListener('click',function(e){if(e.target.tagName==='A')n.classList.remove('open')});
+
+  // 대상자 필터
+  document.querySelectorAll('.filter button').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.filter button').forEach(function(x){x.classList.remove('active')});
+      b.classList.add('active');
+      var f=b.dataset.f;
+      document.querySelectorAll('.mod').forEach(function(m){
+        var a=m.dataset.aud;
+        var show=(f==='all')||(a==='both')||(a===f);
+        m.classList.toggle('dim',!show);
+      });
+    });
+  });
+
+  // 스크롤 리빌
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+</script>
+</body>
+</html>
