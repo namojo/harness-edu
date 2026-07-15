@@ -1,0 +1,2 @@
+# 공식 MCP Python SDK (FastMCP 포함). 설치: pip install -r requirements.txt
+mcp[cli]>=1.2.0

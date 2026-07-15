@@ -1,0 +1,40 @@
+# PR이 열릴 때마다 Codex가 자동으로 코드 리뷰를 수행하는 CI 게이트.
+#
+# 이것이 "검증자 분리" 원칙의 자동화판이다 — 사람이 리뷰를 잊어도 파이프라인이 강제한다.
+# 실제 사용 시 저장소 Settings > Secrets에 OPENAI_API_KEY를 등록해야 한다.
+
+name: codex-review
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # base 브랜치와 비교하려면 전체 히스토리 필요
+
+      - name: Install Codex CLI
+        run: npm install -g @openai/codex
+
+      - name: Run tests (초록불이어도 안심 금지 — 아래 리뷰가 진짜 게이트)
+        run: |
+          pip install pytest
+          python -m pytest tests/ -q
+
+      - name: Codex review (main 대비 변경분)
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          codex login --with-api-key <<< "$OPENAI_API_KEY"
+          codex review --base origin/main --title "PR ${{ github.event.number }}" \
+            | tee codex-review.md
+
+      - name: Upload review
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-review
+          path: codex-review.md
