@@ -1,7 +1,7 @@
 """라인별 불량률(ppm)을 계산해 임계치 초과 라인을 보고하는 품질 점검 스크립트.
 
 ⚠️ 실습용: 이 파일에는 의도된 결함이 두 군데 숨어 있다.
-   codex review / codex exec 가 이를 잡아내는지 확인하는 것이 트랙 A의 목표다.
+   Codex(대화형 진단 또는 codex review)가 이를 잡아내는지 확인하는 것이 트랙 A의 목표다.
    (정답은 track-a-engineering/README.md 참고 — 먼저 스스로/AI로 찾아볼 것.)
 """
 
