@@ -18,5 +18,32 @@
 /harness @SEOUL_MATJIP_MAP_SPEC.md 스펙대로 구현하고자 합니다.
 
 
+─────────────────────────────────────────────
+[실무·확장 실습] — 자세한 학습 순서는 자가학습_가이드.md 참고
+사전: codex login status 로 로그인 확인, 확장 실습은 python 필요
+─────────────────────────────────────────────
 
+실습7. Codex 하네스 엔지니어링 — 트랙 A (엔지니어링, 코드 유지보수)
+# codex-engineering/track-a-engineering 디렉토리에서 실행
+python -m pytest tests/ -q                    # 초록불 확인 (통과하지만 결함이 숨어 있음)
+python src/quality_check.py                   # 전 라인 '정상' 표시 — 사실은 위험 수준
+# 1) 읽기 전용 진단: 숨은 결함 2개를 잡아내는가 (권한 안 줌)
+codex exec --sandbox read-only "src/quality_check.py를 검토해 불량률(ppm) 계산과 경계 처리의 결함을 진단하라. 수정하지 마라."
+# 2) 진단이 타당하면 쓰기 권한을 주고 패치
+codex exec --sandbox workspace-write "src/quality_check.py의 ppm 단위 오류(×1000→×1_000_000)와 0 나눗셈 경계를 고치고, tests/에 절대값·경계값 테스트를 추가해 pytest로 통과시켜라. 변경 요약을 남겨라."
+# 3) 수정분(diff)을 분리된 눈으로 교차 검증
+codex review --uncommitted | tee review.md
+
+실습8. Codex 하네스 엔지니어링 — 트랙 B (비개발 업무 자동화)
+# codex-engineering/track-b-ops 디렉토리에서 실행 (--output-schema 로 출력 형식을 계약)
+codex exec --search --sandbox read-only --output-schema schema/regwatch.schema.json --output-last-message regwatch.json "최근 1주 한국 금융 규제·공시를 조사해 schema에 맞춰 JSON으로 반환하라. category·impact는 스키마에 정의된 값 중에서만 고르라."
+
+실습9. 오픈소스 MCP Tool 만들기 (Claude Code·Codex 공용)
+# tool/mcp-server 디렉토리에서 실행
+pip install -r requirements.txt
+claude mcp add production-metrics -- python server.py
+  → Claude Code에서: production-metrics 도구로 07-14 A·B·C 라인 OEE를 구하고 가장 낮은 라인의 병목을 정리해줘
+# 같은 서버를 Codex에도 등록 (절대경로 권장)
+codex mcp add production-metrics -- python <절대경로>/harness-edu/tool/mcp-server/server.py
+  → codex exec --sandbox read-only "production-metrics MCP로 07-14 B라인 OEE와 불량률(ppm)을 구하고 개선 우선순위를 제안해라"
 
