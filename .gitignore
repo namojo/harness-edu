@@ -8,3 +8,10 @@
 # 환경변수
 .env
 .env.local
+
+# Python (tool/, codex-engineering/ 실습 부산물)
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
