@@ -1,7 +1,7 @@
 
 ## Step 1 — 체크리스트 완료
 
-스크립트 실행 전 [`SETUP_CHECKLIST_ko.md`](SETUP_CHECKLIST_ko.md)를 먼저 읽고 완료하세요.
+스크립트 실행 전 [`SETUP_CHECKLIST_ko.md`](./setup/SETUP_CHECKLIST_ko.md)를 먼저 읽고 완료하세요.
 
 주요 확인 사항:
 - **Claude Pro/Max** 및 **Gemini Advanced** 구독 완료 (API Key가 아닌 구독 플랜)
